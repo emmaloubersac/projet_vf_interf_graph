@@ -14,6 +14,12 @@ if (SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer) != 0){
 #include <stdio.h>
 #include <stdlib.h>
 
+void barre(int x, int y, int w, int h, Uint32 coul);   //affiche barre
+void cercle(int cx, int cy, int rayon, int coul);    //affiche cercle
+void ligneVerticale(int x, int y, int h, Uint32 coul);  //affiche ligne verticale
+void ligneHorizontale(int x, int y, int w, Uint32 coul);   //affiche ligne horizontale
+void disque(int cx, int cy, int rayon, int coul);    //affiche disque
+
 int main(int argc, char **agrv){
     SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -109,8 +115,13 @@ int main(int argc, char **agrv){
 
 				case SDL_MOUSEBUTTONDOWN:   //gestion evenemnt cliquer avec la souris
 					printf("Click en : %d / %d\n", event.button.x, event.button.y);
+					
+					if(event.button.clicks >= 2)
+						printf("Double-clic !\n");
+					
 					break;
 
+				
 				case SDL_KEYDOWN:    //gestion evenement du clavier
 					switch (event.key.keysym.sym)
 					{
@@ -140,4 +151,95 @@ int main(int argc, char **agrv){
 	SDL_Quit();
 
     return EXIT_SUCCESS;
+}
+
+
+void barre(int x, int y, int w, int h, Uint32 coul)   //dessiner une barre
+{
+  SDL_Rect r;
+ 
+  r.x = x;
+  r.y = y;
+  r.w = w;
+  r.h = h;
+ 
+  SDL_FillRect(affichage, &r, coul);
+}
+
+void cercle(int cx, int cy, int rayon, int coul)
+{
+  int d, y, x;
+ 
+  d = 3 - (2 * rayon);
+  x = 0;
+  y = rayon;
+ 
+  while (y >= x) {
+    setPixelVerif(cx + x, cy + y, coul);
+    setPixelVerif(cx + y, cy + x, coul);
+    setPixelVerif(cx - x, cy + y, coul);
+    setPixelVerif(cx - y, cy + x, coul);
+    setPixelVerif(cx + x, cy - y, coul);
+    setPixelVerif(cx + y, cy - x, coul);
+    setPixelVerif(cx - x, cy - y, coul);
+    setPixelVerif(cx - y, cy - x, coul);
+ 
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+ 
+    x++;
+  }
+}
+
+void ligneHorizontale(int x, int y, int w, Uint32 coul)
+{
+  SDL_Rect r;
+ 
+  r.x = x;
+  r.y = y;
+  r.w = w;
+  r.h = 1;
+ 
+  SDL_FillRect(affichage, &r, coul);
+}
+ 
+void ligneVerticale(int x, int y, int h, Uint32 coul)
+{
+  SDL_Rect r;
+ 
+  r.x = x;
+  r.y = y;
+  r.w = 1;
+  r.h = h;
+ 
+  SDL_FillRect(affichage, &r, coul);
+}
+
+void disque(int cx, int cy, int rayon, int coul)
+{
+  int d, y, x;
+ 
+  d = 3 - (2 * rayon);
+  x = 0;
+  y = rayon;
+ 
+  while (y >= x) {
+    ligneHorizontale(cx - x, cy - y, 2 * x + 1, coul);
+    ligneHorizontale(cx - x, cy + y, 2 * x + 1, coul);
+    ligneHorizontale(cx - y, cy - x, 2 * y + 1, coul);
+    ligneHorizontale(cx - y, cy + x, 2 * y + 1, coul);
+ 
+    if (d < 0)
+      d = d + (4 * x) + 6;
+    else {
+      d = d + 4 * (x - y) + 10;
+      y--;
+    }
+ 
+    x++;
+  }
 }
